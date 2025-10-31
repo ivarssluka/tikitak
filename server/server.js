@@ -15,14 +15,6 @@ app.use(cors());
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({
-    name: 'tikitak-online-service',
-    message: 'Service is up. Use /api/v1/auth/guest or /api/v1/rooms.',
-    version: 'v1'
-  });
-});
-
 app.post('/api/v1/auth/guest', (req, res) => {
   const nicknameRaw = typeof req.body?.nickname === 'string' ? req.body.nickname : '';
   const nickname = nicknameRaw.trim().slice(0, 16) || `Guest-${Math.floor(Math.random() * 1000)}`;

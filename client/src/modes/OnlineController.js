@@ -1,12 +1,11 @@
 import Player from '../core/Player.js';
 
 export default class OnlineController {
-  constructor({ ui, stats, onStatsUpdate, httpBase = '', wsBase = '' }) {
+  constructor({ ui, stats, onStatsUpdate, httpBase = '' }) {
     this.ui = ui;
     this.stats = stats;
     this.onStatsUpdate = onStatsUpdate;
-    this.httpBase = this.normalizeBase(httpBase);
-    this.wsBase = this.normalizeBase(wsBase);
+    this.httpBase = httpBase;
     this.ws = null;
     this.player = null;
     this.opponent = null;
@@ -31,12 +30,8 @@ export default class OnlineController {
       this.isSpectator = role === 'spectator';
       this.ui.showSpectatorBanner(this.isSpectator);
 
-      const wsUrl = this.buildWsUrl({
-        roomId: room,
-        playerId: auth.playerId,
-        role,
-        token: auth.token
-      });
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const wsUrl = `${wsProtocol}://${window.location.host}/ws?roomId=${encodeURIComponent(room)}&playerId=${encodeURIComponent(auth.playerId)}&role=${encodeURIComponent(role)}&token=${encodeURIComponent(auth.token)}`;
       this.ws = new WebSocket(wsUrl);
       this.bindSocketEvents();
     } catch (error) {
@@ -46,7 +41,7 @@ export default class OnlineController {
   }
 
   async fetchGuest(nickname) {
-    const response = await fetch(this.apiUrl('/api/v1/auth/guest'), {
+    const response = await fetch(`${this.httpBase}/api/v1/auth/guest`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nickname })
@@ -176,48 +171,5 @@ export default class OnlineController {
 
   handleCellClick(index) {
     this.sendMove(index);
-  }
-
-  apiUrl(path) {
-    if (!path.startsWith('/')) {
-      // Ensure paths begin with a slash for consistency.
-      path = `/${path}`;
-    }
-    if (!this.httpBase) {
-      return path;
-    }
-    return `${this.httpBase}${path}`;
-  }
-
-  normalizeBase(base) {
-    if (typeof base !== 'string') {
-      return '';
-    }
-    return base.trim().replace(/\/+$/, '');
-  }
-
-  buildWsUrl({ roomId, playerId, role, token }) {
-    const params = new URLSearchParams({ roomId, playerId, role, token });
-    const preferredBase = this.wsBase || this.httpBase;
-
-    if (preferredBase) {
-      try {
-        const target = new URL(preferredBase);
-        let protocol = target.protocol;
-        if (protocol === 'http:') {
-          protocol = 'ws:';
-        } else if (protocol === 'https:') {
-          protocol = 'wss:';
-        } else if (protocol !== 'ws:' && protocol !== 'wss:') {
-          protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        }
-        return `${protocol}//${target.host}/ws?${params.toString()}`;
-      } catch (error) {
-        console.warn('Invalid WebSocket base URL provided. Falling back to window location.', error);
-      }
-    }
-
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${wsProtocol}//${window.location.host}/ws?${params.toString()}`;
   }
 }
