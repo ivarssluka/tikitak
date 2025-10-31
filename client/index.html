@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="tikitak-api-base" content="" />
-  <meta name="tikitak-ws-base" content="" />
   <title>TikiTak - Neon Tic-Tac-Toe</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -71,16 +69,6 @@
       </aside>
     </main>
   </div>
-  <script>
-    (function () {
-      const apiMeta = document.querySelector('meta[name="tikitak-api-base"]');
-      const wsMeta = document.querySelector('meta[name="tikitak-ws-base"]');
-      window.__TIKITAK_CONFIG__ = {
-        apiBase: apiMeta?.content?.trim() || '',
-        wsBase: wsMeta?.content?.trim() || ''
-      };
-    })();
-  </script>
   <script type="module" src="src/main.js"></script>
 </body>
 </html>

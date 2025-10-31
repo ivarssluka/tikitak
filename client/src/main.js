@@ -4,8 +4,6 @@ import LocalPvPController from './modes/LocalPvPController.js';
 import PvCController from './modes/PvCController.js';
 import OnlineController from './modes/OnlineController.js';
 
-const runtimeConfig = resolveRuntimeConfig();
-
 const statsService = new StatsService();
 let currentMode = null;
 let currentController = null;
@@ -88,9 +86,7 @@ function ensureOnlineController() {
     onlineController = new OnlineController({
       ui,
       stats: statsService,
-      onStatsUpdate: () => renderStats(),
-      httpBase: runtimeConfig.apiBase,
-      wsBase: runtimeConfig.wsBase
+      onStatsUpdate: () => renderStats()
     });
   }
   return onlineController;
@@ -115,12 +111,3 @@ function handleChatSubmit(message) {
 window.addEventListener('beforeunload', () => {
   onlineController?.disconnect();
 });
-
-function resolveRuntimeConfig() {
-  const globalConfig = window.__TIKITAK_CONFIG__ || {};
-  const normalize = (value) => (typeof value === 'string' ? value.trim().replace(/\/+$/, '') : '');
-  return {
-    apiBase: normalize(globalConfig.apiBase),
-    wsBase: normalize(globalConfig.wsBase)
-  };
-}
