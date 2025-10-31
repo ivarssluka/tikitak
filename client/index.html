@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="tikitak-api-base" content="" />
+  <meta name="tikitak-ws-base" content="" />
+  <title>TikiTak - Neon Tic-Tac-Toe</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <h1>TikiTak</h1>
+      <p class="tagline">Neon-infused Tic-Tac-Toe with Local, AI, and Online play</p>
+    </header>
+    <main class="app-main">
+      <section class="board-panel">
+        <div class="mode-select" role="group" aria-label="Select game mode">
+          <button id="mode-local" class="mode-btn" data-mode="local">Local PvP</button>
+          <button id="mode-ai" class="mode-btn" data-mode="pvc">Player vs Computer</button>
+          <button id="mode-online" class="mode-btn" data-mode="online">Online PvP</button>
+        </div>
+        <div id="difficulty-panel" class="difficulty-panel" hidden>
+          <label for="difficulty-select">AI Difficulty</label>
+          <select id="difficulty-select">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+        <div id="online-panel" class="online-panel" hidden>
+          <form id="online-form">
+            <label>
+              Room Code
+              <input id="room-code" name="room" maxlength="12" required />
+            </label>
+            <label>
+              Nickname
+              <input id="nickname" name="nickname" maxlength="16" required />
+            </label>
+            <label>
+              Role
+              <select id="role-select" name="role">
+                <option value="player">Player</option>
+                <option value="spectator">Spectator</option>
+              </select>
+            </label>
+            <button type="submit">Join / Create Room</button>
+          </form>
+        </div>
+        <div id="spectator-banner" class="spectator-banner" hidden>
+          Spectating: Moves disabled
+        </div>
+        <div id="board" class="board" role="grid" aria-label="Tic Tac Toe board"></div>
+        <div id="status" class="status" role="status" aria-live="polite">Choose a mode to begin.</div>
+      </section>
+      <aside class="side-panel">
+        <section class="stats-panel">
+          <h2>Stats</h2>
+          <div id="stats-content" class="stats-content"></div>
+        </section>
+        <section class="chat-panel" id="chat-panel" hidden>
+          <h2>Chat</h2>
+          <div id="chat-log" class="chat-log" aria-live="polite"></div>
+          <form id="chat-form">
+            <input id="chat-input" type="text" placeholder="Type message" maxlength="120" autocomplete="off" />
+            <button type="submit">Send</button>
+          </form>
+        </section>
+      </aside>
+    </main>
+  </div>
+  <script>
+    (function () {
+      const apiMeta = document.querySelector('meta[name="tikitak-api-base"]');
+      const wsMeta = document.querySelector('meta[name="tikitak-ws-base"]');
+      window.__TIKITAK_CONFIG__ = {
+        apiBase: apiMeta?.content?.trim() || '',
+        wsBase: wsMeta?.content?.trim() || ''
+      };
+    })();
+  </script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

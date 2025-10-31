@@ -1,0 +1,10 @@
+{
+  "name": "tikitak",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Neon Tic-Tac-Toe client and server monorepo",
+  "scripts": {
+    "postinstall": "npm install --prefix server",
+    "start": "npm --prefix server start"
+  }
+}
